@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+tmp/
+
+# Local vault source and secrets
+vault/
+.env
+.env.*
+!.env.example
+.codex
+
+# Generated site content from vault sync
+public/generated/
+src/content/
+src/data/generated/
