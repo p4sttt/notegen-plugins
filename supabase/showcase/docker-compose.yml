@@ -73,7 +73,7 @@ services:
   # 5. Main Notegen Application
   notegen:
     build:
-      context: ../../
+      context: ../../../
       dockerfile: Dockerfile
     container_name: notegen-app
     depends_on:
@@ -86,7 +86,7 @@ services:
       SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}"
       ASTRO_BASE: /
     volumes:
-      - ../../:/app
+      - ../../../:/app
       - /app/node_modules
       - ./test-vault:/vault
     ports:

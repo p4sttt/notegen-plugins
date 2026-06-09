@@ -49,9 +49,16 @@ The system will automatically interpolate these environment variables at sync ti
 
 ---
 
-## Local Integration Testing (Docker Compose)
+## Local Showcase & Integration Testing
 
-To make testing and debugging the plugin simple without setting up a remote Supabase project, we have provided a fully self-contained local testing suite inside the plugin directory.
+To test and debug the plugin locally without setting up a remote Supabase project, a self-contained local testing suite is provided inside the [showcase](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase) directory.
+
+### Directory Structure of Showcase
+- [showcase/run-test.sh](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase/run-test.sh): Dynamically generates a cryptographic JWT key, configures the local auth gateway, and spins up the Docker Compose environment.
+- [showcase/docker-compose.yml](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase/docker-compose.yml): Boots services for PostgreSQL (`db`), GoTrue auth (`auth`), PostgREST (`rest`), reverse proxy (`gateway`), database explorer (`pgweb`), and the Astro app itself (`notegen`).
+- [showcase/gateway.conf](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase/gateway.conf): Nginx configuration acting as the API gateway.
+- [showcase/init.sql](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase/init.sql): SQL script loaded by PostgreSQL upon boot to set up test schemas, roles, and Row Level Security (RLS) policies.
+- [showcase/test-vault](file:///home/d4y2k/progs/notegen/plugins/supabase/showcase/test-vault): Mock Obsidian vault containing test databases (`articles.csv`) and configurations.
 
 ### Run Instructions:
 1. Ensure Docker and Docker Compose are installed on your system.
@@ -60,16 +67,17 @@ To make testing and debugging the plugin simple without setting up a remote Supa
    export GITHUB_CLIENT_ID=your_id
    export GITHUB_CLIENT_SECRET=your_secret
    ```
-   *(If not set, GoTrue will start with mock IDs for testing).*
+   *(If not set, GoTrue will start with mock credentials).*
 3. Start the test environment:
    ```bash
-   ./plugins/supabase/run-test.sh
+   ./plugins/supabase/showcase/run-test.sh
    ```
 
 ### What this does:
 - Boots your Notegen Astro application in interactive development mode on `http://localhost:4321`.
+- Boots local auth gateway reverse proxy on `http://localhost:8000`.
 
 ### Viewing Users & Database Tables (pgweb):
-You can access the database explorer (pgweb) at `http://localhost:8082`. It connects to PostgreSQL automatically.
+You can access the database explorer (pgweb) at `http://localhost:8082`.
 - **To view database overrides**: Under the default `public` schema in the sidebar, open the `database_overrides` table.
-- **To view registered users**: In the top-left dropdown, change the **Schema** from `public` to `auth`. Then open the `users` table to see all email/password and OAuth signups.
+- **To view registered users**: In the top-left dropdown, change the **Schema** from `public` to `auth`. Then open the `users` table to see registered accounts.
