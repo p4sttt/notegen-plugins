@@ -1,0 +1,105 @@
+services:
+  # 1. Database (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: supabase-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Auth Service (GoTrue)
+  auth:
+    image: supabase/gotrue:v2.146.0
+    container_name: supabase-auth
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      API_HOST: 0.0.0.0
+      PORT: 9999
+      API_EXTERNAL_URL: http://localhost:8000/auth/v1
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_PORT: 9999
+      GOTRUE_API_EXTERNAL_URL: http://localhost:8000/auth/v1
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:postgrespassword@db:5432/postgres?sslmode=disable
+      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_SITE_URL: http://localhost:4321
+      GOTRUE_URI_ALLOW_LIST: http://localhost:4321/*
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_EXTERNAL_GITHUB_ENABLED: "true"
+      GOTRUE_EXTERNAL_GITHUB_CLIENT_ID: "${GITHUB_CLIENT_ID:-mock_id}"
+      GOTRUE_EXTERNAL_GITHUB_SECRET: "${GITHUB_CLIENT_SECRET:-mock_secret}"
+      GOTRUE_EXTERNAL_GITLAB_ENABLED: "true"
+      GOTRUE_EXTERNAL_GITLAB_CLIENT_ID: "${GITLAB_CLIENT_ID:-mock_id}"
+      GOTRUE_EXTERNAL_GITLAB_SECRET: "${GITLAB_CLIENT_SECRET:-mock_secret}"
+
+  # 3. PostgREST API
+  rest:
+    image: postgrest/postgrest:v12.0.2
+    container_name: supabase-rest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgrespassword@db:5432/postgres
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+
+  # 4. API Gateway (Nginx reverse proxy mimicking Kong)
+  gateway:
+    image: nginx:alpine
+    container_name: supabase-gateway
+    depends_on:
+      - auth
+      - rest
+    volumes:
+      - ./gateway.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8000:8000"
+
+  # 5. Main Notegen Application
+  notegen:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: notegen-app
+    depends_on:
+      - gateway
+    entrypoint: []
+    command: ["sh", "-c", "npm run sync:vault && npm run dev -- --host 0.0.0.0"]
+    environment:
+      VAULT_PATH: /vault
+      SUPABASE_URL: http://localhost:8000
+      SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}"
+      ASTRO_BASE: /
+    volumes:
+      - ../../:/app
+      - /app/node_modules
+      - ./test-vault:/vault
+    ports:
+      - "4321:4321"
+
+  # 6. Database & Auth Admin Panel (pgweb)
+  pgweb:
+    image: sosedoff/pgweb:0.15.0
+    container_name: supabase-pgweb
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://postgres:postgrespassword@db:5432/postgres?sslmode=disable
+    ports:
+      - "8082:8081"

@@ -46,3 +46,30 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 The system will automatically interpolate these environment variables at sync time.
+
+---
+
+## Local Integration Testing (Docker Compose)
+
+To make testing and debugging the plugin simple without setting up a remote Supabase project, we have provided a fully self-contained local testing suite inside the plugin directory.
+
+### Run Instructions:
+1. Ensure Docker and Docker Compose are installed on your system.
+2. If you want to test actual OAuth logins with GitHub or GitLab, set your OAuth keys in your environment first:
+   ```bash
+   export GITHUB_CLIENT_ID=your_id
+   export GITHUB_CLIENT_SECRET=your_secret
+   ```
+   *(If not set, GoTrue will start with mock IDs for testing).*
+3. Start the test environment:
+   ```bash
+   ./plugins/supabase/run-test.sh
+   ```
+
+### What this does:
+- Boots your Notegen Astro application in interactive development mode on `http://localhost:4321`.
+
+### Viewing Users & Database Tables (pgweb):
+You can access the database explorer (pgweb) at `http://localhost:8082`. It connects to PostgreSQL automatically.
+- **To view database overrides**: Under the default `public` schema in the sidebar, open the `database_overrides` table.
+- **To view registered users**: In the top-left dropdown, change the **Schema** from `public` to `auth`. Then open the `users` table to see all email/password and OAuth signups.

@@ -1,0 +1,21 @@
+{
+  "siteText": {
+    "brand": "Supabase Test Vault",
+    "ru": {
+      "heroTitle": "Тестирование Supabase",
+      "metaDescription": "Тестовое окружение для плагина интеграции с Supabase",
+      "heroBody": "Войдите через настройки в меню (кнопка в правом верхнем углу) и попробуйте изменить колонку 'Read' в таблице."
+    },
+    "en": {
+      "heroTitle": "Supabase Plugin Test",
+      "metaDescription": "Test environment for the Supabase integration plugin",
+      "heroBody": "Log in via the Preferences panel (top right Menu button) and try toggling the 'Read' checkbox in the database view."
+    }
+  },
+  "plugins": {
+    "supabase": {
+      "supabaseUrl": "${SUPABASE_URL}",
+      "supabaseAnonKey": "${SUPABASE_ANON_KEY}"
+    }
+  }
+}
