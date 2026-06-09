@@ -8,6 +8,7 @@ description: Dedicated workspace for testing Supabase authentication and table c
 Welcome to the test vault! This workspace is dedicated to checking the Supabase auth and state sync integration.
 
 ### How to test:
+
 1. Click the **Menu / Меню** button in the top right corner of the header to open the Preferences panel.
 2. Under **Supabase Cloud Sync / Supabase Синхронизация**, you will see options to sign in.
 3. Once logged in, go to the **[Articles Database](file:///database/index.html)** page.

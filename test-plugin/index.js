@@ -1,41 +1,41 @@
 export default function testPlugin(options = {}) {
   return {
     beforeSync(context) {
-      console.log("[Test Plugin] beforeSync hook executed. testOption:", options.testOption);
-      context.set("started-at", Date.now());
+      console.log('[Test Plugin] beforeSync hook executed. testOption:', options.testOption);
+      context.set('started-at', Date.now());
     },
-    
+
     processNote(note, context) {
       if (options.addTag) {
-        note.data.tags = [...(note.data.tags || []), "test-plugin-tag"];
+        note.data.tags = [...(note.data.tags || []), 'test-plugin-tag'];
       }
       return note;
     },
-    
+
     processDatabase(database, context) {
       return database;
     },
-    
+
     afterSync({ context, topics, topLevelNotes, topLevelDatabases }) {
-      const elapsed = Date.now() - context.get("started-at");
+      const elapsed = Date.now() - context.get('started-at');
       console.log(`[Test Plugin] afterSync hook executed. Sync took ${elapsed}ms`);
-      
+
       // Inject Header Link
       context.registerHeaderLink({
-        label: "GitHub",
-        href: "https://github.com",
+        label: 'GitHub',
+        href: 'https://github.com',
         i18n: {
-          ru: "Гитхаб",
-          en: "GitHub"
-        }
+          ru: 'Гитхаб',
+          en: 'GitHub',
+        },
       });
 
       // Inject custom Preferences dropdown group
       context.registerPreferencesSection({
-        title: "Test Plugin Controls",
+        title: 'Test Plugin Controls',
         i18n: {
-          ru: "Настройки тест-плагина",
-          en: "Test Plugin Controls"
+          ru: 'Настройки тест-плагина',
+          en: 'Test Plugin Controls',
         },
         html: `
           <div style="padding: 0.5rem 0;">
@@ -49,7 +49,7 @@ export default function testPlugin(options = {}) {
               });
             </script>
           </div>
-        `
+        `,
       });
 
       // Inject Global Styles (e.g. accent line under the brand name)
@@ -64,12 +64,12 @@ export default function testPlugin(options = {}) {
         console.log("[Test Plugin] Global client script initialized successfully!");
       `);
     },
-    
+
     astro: {
       remarkPlugins: [],
       rehypePlugins: [],
       integrations: [],
-      shikiConfig: {}
-    }
+      shikiConfig: {},
+    },
   };
 }

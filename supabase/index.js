@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 
 export default function supabasePlugin(options = {}) {
   const { supabaseUrl, supabaseAnonKey } = options;
@@ -7,13 +7,13 @@ export default function supabasePlugin(options = {}) {
   return {
     beforeSync(context) {
       // Clean up previous auth.astro page if it exists to keep the codebase clean
-      const pagePath = path.resolve("src/pages/auth.astro");
+      const pagePath = path.resolve('src/pages/auth.astro');
       if (fs.existsSync(pagePath)) {
         try {
           fs.unlinkSync(pagePath);
-          console.log("[Supabase Plugin] Removed obsolete auth.astro page.");
+          console.log('[Supabase Plugin] Removed obsolete auth.astro page.');
         } catch (e) {
-          console.error("[Supabase Plugin] Failed to remove auth.astro:", e);
+          console.error('[Supabase Plugin] Failed to remove auth.astro:', e);
         }
       }
     },
@@ -113,7 +113,7 @@ export default function supabasePlugin(options = {}) {
           align-items: center !important;
           pointer-events: none !important;
           opacity: 0 !important;
-          transition: opacity 0.3s ease !important;
+          transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         }
         .auth-modal.is-visible {
           pointer-events: auto !important;
@@ -125,55 +125,61 @@ export default function supabasePlugin(options = {}) {
           left: 0 !important;
           width: 100% !important;
           height: 100% !important;
-          background: rgba(0, 0, 0, 0.4) !important;
-          backdrop-filter: blur(8px) !important;
+          background: rgba(0, 0, 0, 0.45) !important;
+          backdrop-filter: blur(12px) !important;
         }
         .auth-modal-card {
           position: relative !important;
           width: 100% !important;
-          max-width: 25rem !important;
+          max-width: 25.5rem !important;
           margin: 1rem !important;
           padding: var(--space-6) !important;
-          border: 1px solid var(--line) !important;
+          border: 1px solid rgba(var(--accent-rgb), 0.15) !important;
           border-radius: var(--radius-xl) !important;
-          background: var(--surface-strong) !important;
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
+          background: color-mix(in srgb, var(--surface-strong) 88%, transparent) !important;
+          backdrop-filter: blur(24px) !important;
+          box-shadow: 
+            0 30px 60px -15px rgba(0, 0, 0, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.05) !important;
           z-index: 2 !important;
-          transform: scale(0.95) !important;
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+          transform: scale(0.93) translateY(10px) !important;
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
         .auth-modal.is-visible .auth-modal-card {
-          transform: scale(1) !important;
+          transform: scale(1) translateY(0) !important;
         }
         .auth-modal-close {
           position: absolute !important;
-          top: 0.75rem !important;
-          right: 1rem !important;
-          font-size: 1.75rem !important;
+          top: 0.85rem !important;
+          right: 1.1rem !important;
+          font-size: 1.6rem !important;
           background: transparent !important;
           border: none !important;
           color: var(--text-soft) !important;
           cursor: pointer !important;
-          transition: color 0.2s ease !important;
+          transition: color 0.2s ease, transform 0.2s ease !important;
           line-height: 1 !important;
         }
         .auth-modal-close:hover {
           color: var(--text) !important;
+          transform: scale(1.1) !important;
         }
         .auth-modal-title {
-          font-size: 1.35rem !important;
-          font-weight: 800 !important;
+          font-size: 1.45rem !important;
+          font-weight: 850 !important;
           text-align: center !important;
-          margin-bottom: 0.25rem !important;
+          margin-bottom: 0.35rem !important;
           color: var(--text) !important;
           margin-top: 0 !important;
+          letter-spacing: -0.025em !important;
         }
         .auth-modal-subtitle {
-          font-size: 0.8rem !important;
+          font-size: 0.85rem !important;
           color: var(--text-muted) !important;
           text-align: center !important;
-          margin-bottom: 1.25rem !important;
+          margin-bottom: 1.5rem !important;
           margin-top: 0 !important;
+          line-height: 1.4 !important;
         }
         .supabase-loading {
           font-size: 0.85rem;
@@ -183,59 +189,62 @@ export default function supabasePlugin(options = {}) {
         }
         .auth-oauth-buttons {
           display: flex !important;
-          gap: 0.5rem !important;
+          gap: 0.6rem !important;
         }
         .supabase-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.5rem 0.75rem;
+          padding: 0.55rem 0.9rem;
           border-radius: var(--radius-md);
-          font-size: 0.85rem;
-          font-weight: 500;
+          font-size: 0.86rem;
+          font-weight: 600;
           cursor: pointer;
           border: 1px solid var(--line);
           background: var(--surface);
           color: var(--text);
-          transition: all 0.2s ease;
+          transition: all 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .supabase-btn:hover {
           background: var(--bg);
-          border-color: var(--text-soft);
+          border-color: rgba(var(--accent-rgb), 0.3);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         .supabase-btn:active {
-          transform: translateY(1px);
+          transform: translateY(0);
+          box-shadow: none;
         }
         .auth-oauth-buttons .supabase-btn {
           flex: 1 !important;
-          padding: 0.55rem !important;
+          padding: 0.65rem !important;
         }
         .supabase-icon {
           width: 1rem;
           height: 1rem;
         }
         .supabase-btn-github {
-          background: #24292e;
-          color: #ffffff;
-          border: none;
+          background: #24292e !important;
+          color: #ffffff !important;
+          border: none !important;
         }
         .supabase-btn-github:hover {
-          background: #2f363d;
+          background: #1c2024 !important;
         }
         .supabase-btn-gitlab {
-          background: #e24329;
-          color: #ffffff;
-          border: none;
+          background: #e24329 !important;
+          color: #ffffff !important;
+          border: none !important;
         }
         .supabase-btn-gitlab:hover {
-          background: #e85942;
+          background: #d13c24 !important;
         }
         .auth-divider-container {
           display: flex !important;
           align-items: center !important;
           text-align: center !important;
-          margin: 1rem 0 !important;
+          margin: 1.25rem 0 !important;
           color: var(--text-soft) !important;
         }
         .auth-divider-container::before,
@@ -245,61 +254,72 @@ export default function supabasePlugin(options = {}) {
           border-bottom: 1px solid var(--line) !important;
         }
         .auth-divider-container:not(:empty)::before {
-          margin-right: .5em !important;
+          margin-right: .6em !important;
         }
         .auth-divider-container:not(:empty)::after {
-          margin-left: .5em !important;
+          margin-left: .6em !important;
         }
         .auth-divider-text {
-          font-size: 0.7rem !important;
+          font-size: 0.72rem !important;
           text-transform: uppercase !important;
-          letter-spacing: 0.05em !important;
+          letter-spacing: 0.06em !important;
+          font-weight: 700 !important;
+          opacity: 0.7 !important;
         }
         .auth-input-label span {
           display: block !important;
-          font-size: 0.75rem !important;
-          font-weight: 600 !important;
+          font-size: 0.78rem !important;
+          font-weight: 700 !important;
           color: var(--text-muted) !important;
-          margin-bottom: 0.25rem !important;
+          margin-bottom: 0.35rem !important;
         }
         .supabase-input {
-          padding: 0.4rem;
+          padding: 0.6rem 0.8rem;
           border: 1px solid var(--line);
-          border-radius: var(--radius-sm);
-          background: var(--bg);
+          border-radius: var(--radius-md);
+          background: color-mix(in srgb, var(--bg) 92%, var(--surface-strong));
           color: var(--text);
-          font-size: 0.8rem;
+          font-size: 0.86rem;
           width: 100%;
+          transition: all 0.2s ease;
+        }
+        .supabase-input:focus {
+          outline: none !important;
+          border-color: var(--accent) !important;
+          box-shadow: 0 0 0 3px var(--accent-soft) !important;
         }
         .auth-form-buttons .supabase-btn {
           flex: 1 !important;
-          padding: 0.55rem !important;
+          padding: 0.65rem !important;
         }
         .supabase-btn-primary {
-          background: var(--accent) !important;
+          background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 80%, var(--text)) 100%) !important;
           color: var(--bg) !important;
           border: none !important;
+          box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.2) !important;
         }
         .supabase-btn-primary:hover {
-          background: color-mix(in srgb, var(--accent) 85%, var(--text)) !important;
+          background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 90%, #ffffff) 0%, var(--accent) 100%) !important;
+          box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.3) !important;
         }
         .auth-profile-card {
           display: flex !important;
           align-items: center !important;
-          gap: 1rem !important;
-          padding: 0.75rem !important;
+          gap: 1.1rem !important;
+          padding: 0.9rem !important;
           border-radius: var(--radius-lg) !important;
-          background: var(--bg) !important;
-          border: 1px solid var(--line) !important;
-          margin-bottom: 1rem !important;
+          background: color-mix(in srgb, var(--bg) 60%, var(--surface)) !important;
+          border: 1px solid rgba(var(--accent-rgb), 0.08) !important;
+          margin-bottom: 1.25rem !important;
           margin-top: 0.5rem !important;
         }
         .supabase-avatar {
-          width: 2.25rem;
-          height: 2.25rem;
+          width: 2.5rem;
+          height: 2.5rem;
           border-radius: 50%;
           object-fit: cover;
           border: 2px solid var(--line);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .supabase-user-info {
           display: flex;
@@ -307,30 +327,31 @@ export default function supabasePlugin(options = {}) {
           min-width: 0;
         }
         .supabase-sync-badge {
-          font-size: 0.7rem;
-          font-weight: 600;
+          font-size: 0.72rem;
+          font-weight: 700;
           color: var(--tag-4-text);
-          margin-top: 0.15rem;
+          margin-top: 0.2rem;
         }
         .supabase-btn-logout {
           width: 100%;
-          margin-top: 0.75rem;
+          margin-top: 0.85rem;
           background: transparent;
-          color: var(--text-muted);
+          color: var(--text-soft);
           border: 1px dashed var(--line);
         }
         .supabase-btn-logout:hover {
-          background: rgba(234, 67, 53, 0.08);
-          color: #ea4335;
-          border-color: rgba(234, 67, 53, 0.2);
+          background: rgba(234, 67, 53, 0.08) !important;
+          color: #ea4335 !important;
+          border-color: rgba(234, 67, 53, 0.2) !important;
+          border-style: solid !important;
         }
       `);
 
       // 2. Register global scripts for Supabase SDK loading, auth management, and LocalStorage state syncing
       context.registerGlobalScript(`
         (function() {
-          const SUPABASE_URL = ${JSON.stringify(supabaseUrl || "")};
-          const SUPABASE_ANON_KEY = ${JSON.stringify(supabaseAnonKey || "")};
+          const SUPABASE_URL = ${JSON.stringify(supabaseUrl || '')};
+          const SUPABASE_ANON_KEY = ${JSON.stringify(supabaseAnonKey || '')};
 
           function ensureSupabaseLoaded() {
             if (window.supabase) {
@@ -758,13 +779,13 @@ export default function supabasePlugin(options = {}) {
 
       // 3. Register a header/sidebar link for the dedicated Auth page (which will open the modal popup instead)
       context.registerHeaderLink({
-        label: "Sign In",
-        href: "#auth",
+        label: 'Sign In',
+        href: '#auth',
         i18n: {
-          ru: "Войти",
-          en: "Sign In"
-        }
+          ru: 'Войти',
+          en: 'Sign In',
+        },
       });
-    }
+    },
   };
 }
